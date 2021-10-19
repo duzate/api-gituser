@@ -1,20 +1,15 @@
 import { Router } from 'express';
-import multer from 'multer';
+
 import multerConfig from './config/multer';
-import FileController from './controllers/FileController';
-import UserController from './controllers/UserController';
+import multer from 'multer';
 
-const routes = Router();
+import { FileRoutes } from './routes/File.Routes';
+import { UserRoutes } from './routes/User.Routes';
+
 const upload = multer(multerConfig);
+const routes = Router();
 
-//User
-routes.post('/users', upload.single('avatar'), UserController.create);
-routes.get('/users', UserController.findAll);
-routes.get('/users/:userID', UserController.findOne);
-routes.put('/users/:userID', upload.single('avatar'), UserController.update);
-routes.delete('/users/:userID', UserController.destroy);
+UserRoutes(routes, upload);
+FileRoutes(routes, upload);
 
-routes.post('/files', upload.single('avatar'), FileController.create);
-routes.get('/files', FileController.index);
-routes.delete('/files/:fileID', FileController.destroy);
 export default routes;
