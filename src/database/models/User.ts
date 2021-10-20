@@ -1,8 +1,22 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { db } from '../db';
 import { File } from './File';
 
-export const User = db.define('user', {
+export interface UserAddModel {
+  id: number;
+  email: string;
+}
+
+export interface UserPros extends Model<UserProps, UserAddModel> {
+  id: number;
+  name: string;
+  email: string;
+  username: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export const User = db.define<UserPros>('user', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
