@@ -1,26 +1,23 @@
 import { Request, Response } from 'express';
-import { where } from 'sequelize/types';
-import { User } from '../database/models/User';
+import { File } from '../models/File';
+import { User } from '../models/User';
 
 class AuthController {
   async store(req: Request, res: Response) {
     const { username } = req.body;
 
-    const user = await User.findOne({ where: { username } });
+    const user = await User.findOne({
+      where: { username },
+      include: [{ model: File, as: 'avatar' }],
+    });
 
     if (!user) {
       return res.status(401).json({ error: 'User not found' });
     }
-
-    const { id, email, name } = user;
-
+    const { id } = user;
     return res.json({
-      user: {
-        id,
-        name,
-        email,
-        username,
-      },
+      user,
+      token: `${id} ${Date.now()}`,
     });
   }
 }

@@ -1,19 +1,13 @@
 import { DataTypes, Model } from 'sequelize';
-import { db } from '../db';
+import { db } from '../../database/db';
 import { File } from './File';
+import { Repo } from './Repo';
 
-export interface UserAddModel {
-  id: number;
-  email: string;
-}
-
-export interface UserPros extends Model<UserProps, UserAddModel> {
+export interface UserPros extends Model {
   id: number;
   name: string;
   email: string;
   username: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export const User = db.define<UserPros>('user', {
@@ -48,4 +42,15 @@ User.belongsTo(File, {
   as: 'avatar',
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
+});
+
+User.hasMany(Repo, {
+  sourceKey: 'id',
+  foreignKey: 'repos_id',
+  as: 'owner',
+});
+
+Repo.belongsTo(User, {
+  foreignKey: 'repos_id',
+  as: 'owner',
 });

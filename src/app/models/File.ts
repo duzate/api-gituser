@@ -1,17 +1,10 @@
 import { DataTypes, Model } from 'sequelize';
-import { db } from '../db';
+import { db } from '../../database/db';
 
-export interface FileAddModel {
-  filename: string;
-  path: string;
-}
-
-export interface FilePros extends Model<FileProps, FileAddModel> {
+export interface FilePros extends Model {
   id: number;
   filename: string;
   path: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export const File = db.define<FilePros>('file', {
