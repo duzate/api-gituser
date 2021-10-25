@@ -3,6 +3,7 @@ import { File } from '../models/File';
 import { User } from '../models/User';
 
 class AuthController {
+  g;
   async store(req: Request, res: Response) {
     const { username } = req.body;
 

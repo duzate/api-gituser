@@ -1,4 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+
+declare module 'express' {
+  export interface Request {
+    userId?: any;
+  }
+}
+
 export default (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
@@ -11,6 +18,5 @@ export default (req: Request, res: Response, next: NextFunction) => {
   const decoded = id;
 
   req.userId = decoded;
-
   return next();
 };

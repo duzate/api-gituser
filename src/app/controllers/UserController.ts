@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { File } from '../models/File';
 import { User } from '../models/User';
-
 class UserController {
   async findAll(req: Request, res: Response) {
     const users = await User.findAll({
@@ -34,17 +33,15 @@ class UserController {
     const emailExists = await User.findOne({
       where: { email: email },
     });
-    if (emailExists) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
-
     const usernameExists = await User.findOne({
       where: { username: username },
     });
+    if (emailExists) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
     if (usernameExists) {
       return res.status(400).json({ error: 'Username already exists' });
     }
-
     const user = await User.create({
       name,
       email,
@@ -54,8 +51,29 @@ class UserController {
     });
     return res.status(201).json({ user, file });
   }
-
   async update(req: Request, res: Response) {
+    const { name, email, username, bio } = req.body;
+
+    const user = await User.findByPk(req.userId);
+
+    if (email && email !== user.email) {
+      const emailExists = await User.findOne({ where: { email: email } });
+
+      if (emailExists) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+    }
+
+    if (username && username !== user.username) {
+      const usernameExists = await User.findOne({
+        where: { username: username },
+      });
+
+      if (usernameExists) {
+        return res.status(400).json({ error: 'Username already exists' });
+      }
+    }
+
     const { originalname: filename, filename: path } = req.file;
     const file = await File.create({
       filename,
@@ -63,9 +81,7 @@ class UserController {
     });
 
     const { id: avatar_id } = file;
-    const { name, email, username, bio } = req.body;
 
-    const { userID } = req.userId;
     await User.update(
       {
         avatar_id,
@@ -74,7 +90,7 @@ class UserController {
         username,
         bio,
       },
-      { where: { id: userID } }
+      { where: { id: req.userId } }
     );
     return res.status(204).send();
   }

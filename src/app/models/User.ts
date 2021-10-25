@@ -8,6 +8,7 @@ export interface UserPros extends Model {
   name: string;
   email: string;
   username: string;
+  avatar_id: string;
 }
 
 export const User = db.define<UserPros>('user', {
@@ -36,6 +37,10 @@ export const User = db.define<UserPros>('user', {
   },
 });
 
+User.afterSave(async (user) => {
+  File.destroy({ where: { id: user.get().avatar_id } });
+});
+
 User.belongsTo(File, {
   constraints: true,
   foreignKey: 'avatar_id',
@@ -53,4 +58,9 @@ User.hasMany(Repo, {
 Repo.belongsTo(User, {
   foreignKey: 'repos_id',
   as: 'owner',
+});
+
+User.belongsToMany(User, {
+  through: 'follow',
+  as: 'following',
 });

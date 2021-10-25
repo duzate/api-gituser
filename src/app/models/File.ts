@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { db } from '../../database/db';
+import { User } from './User';
 
 export interface FilePros extends Model {
   id: number;
